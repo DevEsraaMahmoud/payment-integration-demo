@@ -2,403 +2,275 @@
 
 A complete, production-ready e-commerce application built with Laravel 12, Inertia.js, Vue 3, TailwindCSS, and Stripe payments.
 
-## Features
+## ✨ Features
 
-### Public Storefront
-- ✅ Home page with hero section, featured products, and categories
-- ✅ Product listing with filters (category, price range, search)
-- ✅ Product detail pages with image gallery
-- ✅ Responsive navbar with cart drawer, user menu, and category dropdowns
-- ✅ Footer with links and newsletter form
+### 🛍️ Storefront
+- **Home Page** - Hero section, featured products, category showcase
+- **Product Catalog** - Listing with filters (category, price, search), pagination
+- **Product Details** - Full product information with image gallery
+- **Responsive Design** - Mobile-first, works on all devices
 
-### Shopping Cart & Checkout
-- ✅ Session-based cart (works for guest users)
-- ✅ Cart drawer accessible from any page
-- ✅ Cart page with quantity updates and item removal
-- ✅ Checkout page with billing fields and order summary
-- ✅ Multiple payment methods:
-  - Stripe card payments (Stripe Elements)
-  - Wallet payments (instant)
-  - Partial wallet + Stripe payments
-- ✅ Order creation and confirmation
-- ✅ Success page with order details
+### 🛒 Shopping Cart
+- **Session-based Cart** - Works for guest and authenticated users
+- **Cart Drawer** - Slide-out cart accessible from any page
+- **Cart Management** - Add, update quantities, remove items
 
-### User Accounts
-- ✅ Authentication ready (Laravel Breeze compatible)
-- ✅ User profile and address book (models ready)
-- ✅ Order history page
-- ✅ Wallet system:
+### 💳 Checkout & Payments
+- **Multiple Payment Methods**:
+  - 💳 Stripe Card Payments (Stripe Elements)
+  - 💰 Wallet Payments (instant)
+  - 🔄 Partial Wallet + Stripe
+- **Order Management** - Order creation, tracking, history
+- **Payment Processing** - Secure server-side PaymentIntent creation
+
+### 👤 User Accounts
+- **Authentication** - Login, register, logout
+- **Order History** - View past orders with details
+- **Wallet System**:
   - View balance and transactions
   - Fund wallet via Stripe
   - Use wallet for checkout
-  - Wallet refunds from admin
+  - Receive refunds to wallet
 
-### Admin Panel
-- ✅ Admin dashboard with statistics
-- ✅ Product management (CRUD)
-- ✅ Category management (models ready)
-- ✅ Order management with filtering
-- ✅ Transaction management
-- ✅ Refund system:
+### 🔐 Admin Panel
+- **Dashboard** - Sales statistics and overview
+- **Product Management** - CRUD operations for products
+- **Order Management** - View, filter, update order status
+- **Transaction Management** - View all payments, process refunds
+- **Refund System**:
   - Refund to original payment method (Stripe)
   - Refund to user's wallet
-- ✅ CSV export of orders
-- ✅ Webhook event logging
+- **CSV Export** - Export orders data
 
-### Payments & Refunds
-- ✅ Stripe Payment Intents API integration
-- ✅ Webhook handling with signature verification
-- ✅ Idempotency handling (prevents duplicate processing)
-- ✅ Charge ID tracking for refunds
-- ✅ Transaction persistence with full metadata
-- ✅ Wallet funding via Stripe
-- ✅ Refund to card or wallet
+### 🔔 Webhooks & Integrations
+- **Stripe Webhooks** - Signature verification, idempotency handling
+- **Event Logging** - Track all webhook events
+- **Charge Tracking** - Store charge_id for refunds
 
-## Tech Stack
+## 🚀 Quick Start
 
-- **Backend**: Laravel 12+ (PHP 8.2+)
-- **Frontend**: Inertia.js + Vue 3 + TailwindCSS 4
-- **Payment**: Stripe Payment Intents API
-- **Database**: SQLite (default) or MySQL/PostgreSQL
-- **Authentication**: Laravel Breeze compatible (ready to install)
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js & npm
+- Stripe account (test mode)
 
-## Installation
+### Installation
 
-### 1. Clone Repository
 ```bash
-git clone <repository-url>
-cd payment-integration-demo
-```
-
-### 2. Install Dependencies
-```bash
-# PHP dependencies
+# 1. Install dependencies
 composer install
-
-# Node dependencies
 npm install
-```
 
-### 3. Environment Setup
-```bash
-# Copy environment file
+# 2. Setup environment
 cp .env.example .env
-
-# Generate application key
 php artisan key:generate
-```
 
-### 4. Configure Environment Variables
+# 3. Configure Stripe keys in .env
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 
-Edit `.env` file:
-
-```env
-# Database (SQLite is default)
-DB_CONNECTION=sqlite
-DB_DATABASE=database/database.sqlite
-
-# Or use MySQL
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=ecommerce
-# DB_USERNAME=root
-# DB_PASSWORD=
-
-# Stripe Configuration (Test Mode)
-STRIPE_KEY=pk_test_your_publishable_key_here
-STRIPE_SECRET=sk_test_your_secret_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-STRIPE_CURRENCY=USD
-
-# Mail Configuration (for order confirmations)
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=your_mailtrap_username
-MAIL_PASSWORD=your_mailtrap_password
-MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME="E-Commerce Demo"
-```
-
-### 5. Get Stripe Test Keys
-
-1. Go to https://dashboard.stripe.com/test/apikeys
-2. Copy your **Publishable key** (starts with `pk_test_`)
-3. Copy your **Secret key** (starts with `sk_test_`)
-4. For webhook secret, see "Webhook Testing" section below
-
-### 6. Run Migrations & Seeders
-```bash
+# 4. Run migrations and seeders
 php artisan migrate --seed
-```
 
-This creates:
-- Admin user: `admin@example.com` / `password`
-- Regular user: `test@example.com` / `password`
-- Sample categories and products
-
-### 7. Build Frontend Assets
-```bash
-# Development (with hot reload)
+# 5. Build frontend
 npm run dev
 
-# Production build
-npm run build
-```
-
-### 8. Start Development Server
-```bash
+# 6. Start server
 php artisan serve --port=8000
 ```
 
-Visit http://localhost:8000
+### Stripe Webhook Setup (Local)
 
-## Stripe Webhook Testing
-
-### Local Testing with Stripe CLI
-
-1. **Install Stripe CLI**: https://stripe.com/docs/stripe-cli
-
-2. **Forward webhooks to local server**:
 ```bash
+# Install Stripe CLI: https://stripe.com/docs/stripe-cli
 stripe listen --forward-to http://localhost:8000/webhooks/stripe
-```
 
-3. **Copy the webhook signing secret** (starts with `whsec_`) and add to `.env`:
-```env
-STRIPE_WEBHOOK_SECRET=whsec_your_secret_here
-```
+# Copy webhook secret to .env
+STRIPE_WEBHOOK_SECRET=whsec_...
 
-4. **Test webhook events**:
-```bash
-# Test payment success
+# Test webhook
 stripe trigger payment_intent.succeeded
-
-# Test charge refunded
-stripe trigger charge.refunded
 ```
 
-### Production Webhook Setup
+## 📋 Default Credentials
 
-1. Go to https://dashboard.stripe.com/webhooks
-2. Add endpoint: `https://yourdomain.com/webhooks/stripe`
-3. Select events:
-   - `payment_intent.succeeded`
-   - `charge.refunded`
-4. Copy the webhook signing secret to `.env`
+**Admin User:**
+- Email: `admin@example.com`
+- Password: `password`
 
-## Project Structure
+**Test User:**
+- Email: `test@example.com`
+- Password: `password`
+
+## 🏗️ Tech Stack
+
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: Inertia.js + Vue 3 + TailwindCSS 4
+- **Payment**: Stripe Payment Intents API
+- **Database**: SQLite (default) or MySQL/PostgreSQL
+- **Authentication**: Laravel session-based auth
+
+## 📁 Project Structure
 
 ```
 app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── HomeController.php
-│   │   ├── ProductsController.php
-│   │   ├── CartController.php
-│   │   ├── CheckoutController.php
-│   │   ├── OrderController.php
-│   │   ├── WalletController.php
-│   │   ├── WebhookController.php
-│   │   ├── Payment/
-│   │   │   └── StripeController.php
-│   │   └── Admin/
-│   │       ├── DashboardController.php
-│   │       ├── ProductController.php
-│   │       ├── OrderController.php
-│   │       └── TransactionsController.php
-│   └── Middleware/
-│       └── EnsureUserIsAdmin.php
-├── Models/
-│   ├── Product.php
-│   ├── Category.php
-│   ├── Order.php
-│   ├── OrderItem.php
-│   ├── Transaction.php
-│   ├── Wallet.php
-│   ├── WalletTransaction.php
-│   ├── Address.php
-│   ├── Coupon.php
-│   ├── StripeEvent.php
-│   └── User.php
-└── Services/
-    └── StripeService.php
+├── Http/Controllers/
+│   ├── Auth/              # Authentication
+│   ├── Admin/             # Admin panel
+│   ├── Payment/           # Stripe integration
+│   └── ...                # Public controllers
+├── Models/                # Eloquent models
+├── Services/              # StripeService
+└── Middleware/           # Auth, admin protection
 
 resources/js/
-├── Layouts/
-│   └── AppLayout.vue
-├── Components/
-│   └── CartDrawer.vue
-└── Pages/
-    ├── Home.vue
-    ├── Products/
-    │   ├── Index.vue
-    │   └── Show.vue
-    ├── Cart.vue
-    ├── Checkout.vue
-    ├── Success.vue
-    ├── Wallet.vue
-    ├── Orders/
-    │   ├── Index.vue
-    │   └── Show.vue
-    └── Admin/
-        ├── Dashboard.vue
-        ├── Products.vue
-        ├── Orders.vue
-        └── Transactions.vue
-
-database/
-├── migrations/ (11 migrations)
-└── seeders/
-    ├── DatabaseSeeder.php
-    ├── CategorySeeder.php
-    └── ProductSeeder.php
+├── Layouts/              # AppLayout with navbar/footer
+├── Components/           # CartDrawer, etc.
+└── Pages/                # Vue pages
+    ├── Auth/             # Login, Register
+    ├── Products/          # Index, Show
+    ├── Admin/            # Dashboard, Products, Orders
+    └── ...
 ```
 
-## Usage Guide
+## 🎯 Key Features Implemented
 
-### As a Customer
+✅ **Complete Storefront** - Home, products, cart, checkout  
+✅ **Stripe Integration** - Payment Intents, Elements, webhooks  
+✅ **Wallet System** - Funding, checkout, refunds  
+✅ **Admin Panel** - Products, orders, transactions management  
+✅ **Refund System** - To card or wallet  
+✅ **Order Management** - Tracking, status updates, CSV export  
+✅ **User Authentication** - Login, register, profile  
+✅ **Responsive UI** - Mobile-friendly, TailwindCSS  
+✅ **Webhook Handling** - Signature verification, idempotency  
 
-1. **Browse Products**: Visit `/products` to see all products
-2. **View Product**: Click on any product to see details
-3. **Add to Cart**: Click "Add to Cart" button
-4. **View Cart**: Click cart icon or visit `/cart`
-5. **Checkout**: Go to `/checkout` and:
-   - Enter customer information
-   - Choose payment method (Stripe Card or Wallet)
-   - Complete payment
-6. **View Orders**: After login, visit `/orders`
-7. **Fund Wallet**: Visit `/wallet` and add funds via Stripe
+## 🔧 Configuration
 
-### As an Admin
+### Environment Variables
 
-1. **Login**: Use `admin@example.com` / `password`
-2. **Dashboard**: Visit `/admin/dashboard` for overview
-3. **Manage Products**: `/admin/products` - Create, edit, delete products
-4. **Manage Orders**: `/admin/orders` - View and update order status
-5. **Transactions**: `/admin/transactions` - View and refund transactions
-6. **Export Orders**: Click "Export CSV" on orders page
+```env
+# Stripe
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_CURRENCY=USD
 
-## Testing
+# Database (SQLite default)
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
 
-### Manual Testing Checklist
+# Mail (for order confirmations)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+```
 
-#### Cart & Checkout
-- [ ] Add products to cart
-- [ ] Update quantities
-- [ ] Remove items
-- [ ] Proceed to checkout
-- [ ] Complete Stripe payment
-- [ ] Complete wallet payment
-- [ ] View order confirmation
+## 📝 Testing
 
-#### Wallet System
-- [ ] Fund wallet via Stripe
-- [ ] View wallet balance
-- [ ] View wallet transactions
-- [ ] Use wallet for checkout
-- [ ] Verify balance deduction
-
-#### Admin Functions
-- [ ] Create/edit/delete products
-- [ ] View orders
-- [ ] Update order status
-- [ ] Refund to card
-- [ ] Refund to wallet
-- [ ] Export orders CSV
-
-#### Webhooks
-- [ ] Test `payment_intent.succeeded` webhook
-- [ ] Verify order completion
-- [ ] Verify wallet funding
-- [ ] Test `charge.refunded` webhook
-- [ ] Verify refund processing
-
-### Automated Tests
-
-Run tests:
 ```bash
+# Run tests
 php artisan test
+
+# Test Stripe webhooks locally
+stripe listen --forward-to http://localhost:8000/webhooks/stripe
+stripe trigger payment_intent.succeeded
 ```
 
-## Database Schema
+## 🎨 UI Features
 
-### Key Tables
+- **Cart Drawer** - Slide-out cart from right
+- **Responsive Navbar** - Mobile menu, user dropdown
+- **Product Cards** - Hover effects, quick view
+- **Filter System** - Category, price range, search
+- **Status Badges** - Color-coded order/transaction status
+- **Toast Notifications** - Success/error messages
+
+## 🔒 Security
+
+- CSRF protection (webhook routes excluded)
+- Admin middleware protection
+- Webhook signature verification
+- Input validation on all forms
+- SQL injection protection (Eloquent)
+- XSS protection (Vue auto-escaping)
+
+## 📊 Database Schema
+
 - `users` - User accounts (with `is_admin` flag)
-- `products` - Product catalog (with `category_id`)
+- `products` - Product catalog (with categories)
 - `categories` - Product categories
 - `orders` - Customer orders
 - `order_items` - Order line items
-- `transactions` - Payment transactions (Stripe/Wallet)
+- `transactions` - Payment transactions
 - `wallets` - User wallet balances
-- `wallet_transactions` - Wallet credit/debit history
+- `wallet_transactions` - Wallet history
 - `addresses` - User address book
 - `coupons` - Discount codes
 - `stripe_events` - Webhook event log
 
-## Security Features
+## 🚦 Routes
 
-- ✅ CSRF protection (webhook routes excluded)
-- ✅ Admin middleware protection
-- ✅ Webhook signature verification
-- ✅ Idempotency handling (prevents duplicate webhook processing)
-- ✅ Input validation on all forms
-- ✅ SQL injection protection (Eloquent ORM)
-- ✅ XSS protection (Vue.js auto-escaping)
+**Public:**
+- `/` - Home page
+- `/products` - Product listing
+- `/products/{id}` - Product details
+- `/cart` - Shopping cart
+- `/checkout` - Checkout page
+- `/login` - Login page
+- `/register` - Registration page
 
-## Currency Handling
+**Authenticated:**
+- `/orders` - Order history
+- `/orders/{id}` - Order details
+- `/wallet` - Wallet management
 
-- All amounts stored in **cents** (integers) in database
-- Displayed in **dollars** (decimals) in frontend
-- Currency symbol configurable via `APP_CURRENCY_SYMBOL` env variable
-- Default currency: USD (configurable via `STRIPE_CURRENCY`)
+**Admin:**
+- `/admin/dashboard` - Admin dashboard
+- `/admin/products` - Product management
+- `/admin/orders` - Order management
+- `/admin/transactions` - Transaction management
 
-## Troubleshooting
+## 💡 Usage Examples
 
-### Webhook Not Working
-1. Check `STRIPE_WEBHOOK_SECRET` in `.env`
-2. Verify webhook endpoint URL is correct
-3. Check Laravel logs: `storage/logs/laravel.log`
-4. Test with Stripe CLI: `stripe trigger payment_intent.succeeded`
+### As Customer
+1. Browse products → Add to cart → Checkout
+2. Choose payment: Stripe card or Wallet
+3. View orders in `/orders`
+4. Fund wallet in `/wallet`
 
-### Wallet Funding Not Working
-1. Verify Stripe keys are correct
-2. Check webhook is receiving events
-3. Verify user_id in PaymentIntent metadata
-4. Check wallet_transactions table for errors
+### As Admin
+1. Login with admin credentials
+2. Manage products in `/admin/products`
+3. View orders in `/admin/orders`
+4. Process refunds in `/admin/transactions`
 
-### Refund Failing
-1. Ensure `charge_id` is stored in transactions table
-2. Verify transaction status is 'completed'
-3. Check Stripe dashboard for refund status
-4. Review transaction metadata
+## 📚 Documentation
 
-## Next Steps
+- `COMPLETE_IMPLEMENTATION_GUIDE.md` - Detailed implementation notes
+- `FILES_CREATED_SUMMARY.md` - List of all files created/updated
 
-To complete the application, consider adding:
+## 🐛 Troubleshooting
 
-1. **Authentication Pages**: Install Laravel Breeze for login/register
-2. **User Profile**: Profile page with address management
-3. **Invoice PDF**: Generate PDF invoices using dompdf
-4. **Email Notifications**: Configure mail for order confirmations
-5. **Image Upload**: Product image upload functionality
-6. **Coupon System**: Apply coupons during checkout
-7. **Search**: Full-text search with Laravel Scout
-8. **Reviews**: Product reviews and ratings
-9. **Wishlist**: Save products for later
-10. **Multi-currency**: Support multiple currencies
+**Images not loading?**
+- Check if image URLs are full URLs (https://) or relative paths
+- Ensure storage link: `php artisan storage:link`
 
-## License
+**Webhook not working?**
+- Verify `STRIPE_WEBHOOK_SECRET` in `.env`
+- Check Laravel logs: `storage/logs/laravel.log`
+- Test with Stripe CLI
 
-MIT License - feel free to use this for your portfolio or learning purposes.
+**Wallet funding fails?**
+- Verify Stripe keys are correct
+- Check webhook is receiving events
+- Review `wallet_transactions` table
 
-## Support
+## 📄 License
 
-For issues or questions:
-1. Check the logs: `storage/logs/laravel.log`
-2. Review Stripe dashboard for payment issues
-3. Check webhook events in `stripe_events` table
+MIT License - Free to use for portfolio and learning purposes.
 
 ---
 
