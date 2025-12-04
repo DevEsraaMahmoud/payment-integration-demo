@@ -35,9 +35,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Calculate cart count from session
+        $cart = $request->session()->get('cart', []);
+        $cartCount = array_sum($cart);
+
         return [
             ...parent::share($request),
-            //
+            'auth' => [
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'is_admin' => $request->user()->is_admin ?? false,
+                ] : null,
+            ],
+            'cartCount' => $cartCount,
         ];
     }
 }

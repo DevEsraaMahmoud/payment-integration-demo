@@ -17,16 +17,28 @@ class Transaction extends Model
         'status',
         'payment_method',
         'metadata',
+        'paid_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'metadata' => 'array',
+        'paid_at' => 'datetime',
     ];
 
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+     * Check if transaction can be refunded
+     */
+    public function canBeRefunded(): bool
+    {
+        return $this->status === 'completed' 
+            && $this->payment_provider === 'stripe'
+            && !empty($this->charge_id);
     }
 }
 

@@ -15,6 +15,9 @@ class ProductSeeder extends Seeder
         // Clear existing products
         Product::truncate();
 
+        $electronicsCategory = \App\Models\Category::where('slug', 'electronics')->first();
+        $categoryId = $electronicsCategory ? $electronicsCategory->id : null;
+
         $products = [
             [
                 'name' => 'Premium Wireless Headphones',
@@ -22,6 +25,8 @@ class ProductSeeder extends Seeder
                 'price' => 199.99,
                 'stock' => 50,
                 'image' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
             [
                 'name' => 'Smart Watch Pro',
@@ -29,6 +34,8 @@ class ProductSeeder extends Seeder
                 'price' => 299.99,
                 'stock' => 30,
                 'image' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
             [
                 'name' => 'Wireless Mouse',
@@ -36,6 +43,8 @@ class ProductSeeder extends Seeder
                 'price' => 49.99,
                 'stock' => 100,
                 'image' => 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
             [
                 'name' => 'Mechanical Keyboard',
@@ -43,6 +52,8 @@ class ProductSeeder extends Seeder
                 'price' => 129.99,
                 'stock' => 75,
                 'image' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
             [
                 'name' => 'USB-C Hub',
@@ -50,6 +61,8 @@ class ProductSeeder extends Seeder
                 'price' => 39.99,
                 'stock' => 120,
                 'image' => 'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
             [
                 'name' => 'Laptop Stand',
@@ -57,6 +70,8 @@ class ProductSeeder extends Seeder
                 'price' => 59.99,
                 'stock' => 80,
                 'image' => 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500',
+                'category_id' => $categoryId,
+                'is_active' => true,
             ],
         ];
 
