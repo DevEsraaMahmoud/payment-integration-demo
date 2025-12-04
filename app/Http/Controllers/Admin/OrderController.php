@@ -7,6 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -140,6 +141,31 @@ class OrderController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Download order invoice/receipt as PDF (Admin)
+     * 
+     * GET /admin/orders/{order}/invoice
+     */
+    public function downloadInvoice(Order $order)
+    {
+        // Load relationships
+        $order->load(['items', 'transactions', 'user']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.invoice', [
+            'order' => $order,
+        ]);
+
+        // Set PDF options
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption('enable-local-file-access', true);
+
+        // Download PDF with filename
+        $filename = 'Invoice_' . $order->order_number . '_' . now()->format('Y-m-d') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }
 

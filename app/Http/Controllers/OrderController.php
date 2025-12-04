@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -76,5 +77,35 @@ class OrderController extends Controller
                 'created_at' => $order->created_at->format('Y-m-d H:i:s'),
             ],
         ]);
+    }
+
+    /**
+     * Download order invoice/receipt as PDF
+     * 
+     * GET /orders/{order}/invoice
+     */
+    public function downloadInvoice(Order $order)
+    {
+        // Ensure user owns this order
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Load relationships
+        $order->load(['items', 'transactions', 'user']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('pdf.invoice', [
+            'order' => $order,
+        ]);
+
+        // Set PDF options
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption('enable-local-file-access', true);
+
+        // Download PDF with filename
+        $filename = 'Invoice_' . $order->order_number . '_' . now()->format('Y-m-d') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }

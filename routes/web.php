@@ -52,6 +52,7 @@ Route::prefix('wallet')->group(function () {
 Route::middleware(['auth'])->prefix('orders')->group(function () {
     Route::get('/', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
     Route::get('/{order}', [\App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+    Route::get('/{order}/invoice', [\App\Http\Controllers\OrderController::class, 'downloadInvoice'])->name('orders.invoice');
 });
 
 // Admin routes (requires admin)
@@ -67,6 +68,7 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->pref
     // Orders
     Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+    Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Admin\OrderController::class, 'downloadInvoice'])->name('admin.orders.invoice');
     Route::put('/orders/{order}/status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.update-status');
     Route::get('/orders/export/csv', [\App\Http\Controllers\Admin\OrderController::class, 'export'])->name('admin.orders.export');
     
