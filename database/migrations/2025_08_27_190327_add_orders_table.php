@@ -13,10 +13,19 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
-            $table->decimal('amount', 10, 2);
-            $table->string('status')->default('pending'); // pending | paid | failed
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('order_number')->unique();
+            $table->decimal('total_amount', 10, 2);
+            $table->string('status')->default('pending'); // pending, processing, completed, cancelled, failed
+            $table->string('customer_name')->nullable();
+            $table->string('customer_email')->nullable();
+            $table->string('customer_phone')->nullable();
+            $table->text('shipping_address')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
+            
+            $table->index(['user_id', 'status']);
+            $table->index('order_number');
         });
     }
 
