@@ -69,9 +69,20 @@ class TransactionsController extends Controller
      * Process a refund for a transaction
      * 
      * POST /admin/transactions/{id}/refund
+     * 
+     * Implements idempotent refund: checks status before refunding to prevent duplicate refunds.
      */
     public function refund(Request $request, Transaction $transaction)
     {
+        // Check if already refunded (idempotency check)
+        if ($transaction->status === 'refunded') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction already refunded',
+                'status' => 'already_refunded',
+            ], 200);
+        }
+
         // Validate transaction can be refunded
         if ($transaction->status !== 'completed') {
             return response()->json([

@@ -22,13 +22,14 @@ class StripeService
      * @param int $amountInCents Amount in cents (e.g., 10000 for $100.00)
      * @param string $currency Currency code (default: USD)
      * @param array $metadata Additional metadata
+     * @param string|null $idempotencyKey Stripe idempotency key to prevent duplicate charges
      * @return PaymentIntent
      * @throws ApiErrorException
      */
-    public function createPaymentIntent(int $orderId, int $amountInCents, string $currency = 'USD', array $metadata = []): PaymentIntent
+    public function createPaymentIntent(int $orderId, int $amountInCents, string $currency = 'USD', array $metadata = [], ?string $idempotencyKey = null): PaymentIntent
     {
         try {
-            $paymentIntent = PaymentIntent::create([
+            $params = [
                 'amount' => $amountInCents,
                 'currency' => strtolower($currency),
                 'metadata' => array_merge([
@@ -37,18 +38,28 @@ class StripeService
                 'automatic_payment_methods' => [
                     'enabled' => true,
                 ],
-            ]);
+            ];
+
+            // Prepare request options with idempotency key if provided
+            $options = [];
+            if ($idempotencyKey) {
+                $options['idempotency_key'] = $idempotencyKey;
+            }
+
+            $paymentIntent = PaymentIntent::create($params, $options);
 
             Log::info('PaymentIntent created', [
                 'payment_intent_id' => $paymentIntent->id,
                 'order_id' => $orderId,
                 'amount' => $amountInCents,
+                'idempotency_key' => $idempotencyKey,
             ]);
 
             return $paymentIntent;
         } catch (ApiErrorException $e) {
             Log::error('Stripe PaymentIntent creation failed', [
                 'order_id' => $orderId,
+                'idempotency_key' => $idempotencyKey,
                 'error' => $e->getMessage(),
             ]);
             throw $e;

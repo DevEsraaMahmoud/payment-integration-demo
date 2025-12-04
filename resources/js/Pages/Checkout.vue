@@ -1,7 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+  <AppLayout>
+    <div class="min-h-screen bg-gray-50 py-8">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 
       <!-- Status Messages -->
       <div v-if="error" class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -14,26 +15,26 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Order Summary -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
           <div class="space-y-3 mb-4">
             <div
               v-for="item in items"
               :key="item.id"
-              class="flex justify-between text-sm"
+              class="flex justify-between text-sm text-gray-700"
             >
-              <span>{{ item.name }} x{{ item.quantity }}</span>
-              <span>${{ item.subtotal.toFixed(2) }}</span>
+              <span class="text-gray-900">{{ item.name }} x{{ item.quantity }}</span>
+              <span class="text-gray-900 font-medium">${{ item.subtotal.toFixed(2) }}</span>
             </div>
           </div>
-          <div class="border-t pt-4 flex justify-between text-lg font-semibold">
+          <div class="border-t pt-4 flex justify-between text-lg font-semibold text-gray-900">
             <span>Total:</span>
-            <span>${{ total.toFixed(2) }}</span>
+            <span class="text-blue-600">${{ total.toFixed(2) }}</span>
           </div>
         </div>
 
         <!-- Checkout Form -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold mb-4">Payment Details</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Payment Details</h2>
           <form @submit.prevent="handleSubmit">
             <!-- Customer Information -->
             <div class="space-y-4 mb-6">
@@ -45,7 +46,7 @@
                   v-model="form.customer_name"
                   type="text"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -56,7 +57,7 @@
                   v-model="form.customer_email"
                   type="email"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -66,7 +67,7 @@
                 <input
                   v-model="form.customer_phone"
                   type="tel"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -76,7 +77,7 @@
                 <textarea
                   v-model="form.shipping_address"
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 ></textarea>
               </div>
             </div>
@@ -95,7 +96,7 @@
                     class="mr-3"
                   />
                   <div class="flex-1">
-                    <div class="font-medium">Pay with Card</div>
+                    <div class="font-medium text-gray-900">Pay with Card</div>
                     <div class="text-sm text-gray-500">Stripe secure payment</div>
                   </div>
                 </label>
@@ -114,7 +115,7 @@
                     class="mr-3"
                   />
                   <div class="flex-1">
-                    <div class="font-medium">Pay with Wallet</div>
+                    <div class="font-medium text-gray-900">Pay with Wallet</div>
                     <div class="text-sm text-gray-500">
                       Balance: ${{ walletBalance.toFixed(2) }}
                       <span v-if="!canUseWallet" class="text-red-600">
@@ -148,15 +149,30 @@
             <button
               type="submit"
               :disabled="processing || (paymentMethod === 'stripe' && !stripeLoaded)"
-              class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+              class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold transition-colors"
             >
-              {{ processing ? 'Processing...' : `Pay $${total.toFixed(2)}` }}
+              <span v-if="processing" class="flex items-center justify-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing payment...
+              </span>
+              <span v-else>
+                Pay ${{ total.toFixed(2) }}
+              </span>
             </button>
+            
+            <!-- Idempotency Key Info (for debugging) -->
+            <div v-if="idempotencyKey && processing" class="mt-2 text-xs text-gray-500 text-center">
+              <span class="font-mono">Idempotency Key: {{ idempotencyKey.substring(0, 8) }}...</span>
+            </div>
           </form>
         </div>
       </div>
+      </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
@@ -164,6 +180,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { loadStripe } from '@stripe/stripe-js'
 import { router } from '@inertiajs/vue3'
 import { route as ziggyRoute } from 'ziggy-js'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 // Make route available in template
 const route = ziggyRoute
@@ -199,12 +216,42 @@ let stripe = null
 let elements = null
 let cardElement = null
 
+// Idempotency key for duplicate charge prevention
+const idempotencyKey = ref(null)
+const idempotencyKeyExpiry = ref(null)
+const IDEMPOTENCY_KEY_TTL = 5 * 60 * 1000 // 5 minutes
+
 const form = ref({
   customer_name: '',
   customer_email: '',
   customer_phone: '',
   shipping_address: '',
 })
+
+/**
+ * Generate or retrieve idempotency key
+ * Reuses the same key for 5 minutes to prevent duplicate charges on retries
+ */
+function getOrCreateIdempotencyKey() {
+  const now = Date.now()
+  
+  // Reuse existing key if still valid
+  if (idempotencyKey.value && idempotencyKeyExpiry.value && now < idempotencyKeyExpiry.value) {
+    return idempotencyKey.value
+  }
+  
+  // Generate new UUID v4
+  const newKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+  
+  idempotencyKey.value = newKey
+  idempotencyKeyExpiry.value = now + IDEMPOTENCY_KEY_TTL
+  
+  return newKey
+}
 
 onMounted(async () => {
   try {
@@ -272,6 +319,11 @@ onUnmounted(() => {
 })
 
 async function handleSubmit() {
+  // Prevent double submission
+  if (processing.value) {
+    return
+  }
+
   // Handle wallet payment
   if (paymentMethod.value === 'wallet') {
     await handleWalletPayment()
@@ -286,6 +338,12 @@ async function handleSubmit() {
 
   error.value = ''
   processing.value = true
+
+  // Disable form submission via keyboard (Enter key)
+  const formElement = document.querySelector('form')
+  if (formElement) {
+    formElement.addEventListener('keydown', preventEnterSubmit, { once: true })
+  }
 
   try {
     // Step 1: Create order
@@ -305,12 +363,15 @@ async function handleSubmit() {
 
     const { order_id } = await orderResponse.json()
 
-    // Step 2: Create payment intent
+    // Step 2: Create payment intent with idempotency key
+    const idempotencyKeyValue = getOrCreateIdempotencyKey()
+    
     const intentResponse = await fetch(route('api.stripe.create-intent'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        'Idempotency-Key': idempotencyKeyValue, // Add idempotency key header
       },
       body: JSON.stringify({
         order_id: order_id,
@@ -322,7 +383,12 @@ async function handleSubmit() {
       throw new Error(errorData.error || 'Failed to create payment intent')
     }
 
-    const { clientSecret } = await intentResponse.json()
+    const { clientSecret, message } = await intentResponse.json()
+    
+    // Log if using existing payment attempt
+    if (message) {
+      console.log('Payment intent:', message)
+    }
 
     // Step 3: Confirm payment
     const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(
@@ -347,6 +413,18 @@ async function handleSubmit() {
     }
 
     if (paymentIntent.status === 'succeeded') {
+      // Clear idempotency key on success
+      idempotencyKey.value = null
+      idempotencyKeyExpiry.value = null
+      
+      // Clear cart after successful payment
+      await fetch(route('cart.clear'), {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        },
+      })
+      
       // Redirect to success page
       router.visit(route('checkout.success', { order: order_id }))
     } else {
@@ -355,6 +433,16 @@ async function handleSubmit() {
   } catch (err) {
     error.value = err.message || 'An error occurred during checkout'
     processing.value = false
+  }
+}
+
+/**
+ * Prevent form submission via Enter key when processing
+ */
+function preventEnterSubmit(e) {
+  if (e.key === 'Enter' && processing.value) {
+    e.preventDefault()
+    e.stopPropagation()
   }
 }
 
@@ -378,6 +466,14 @@ async function handleWalletPayment() {
       throw new Error(data.error || 'Failed to process wallet payment')
     }
 
+    // Clear cart after successful wallet payment
+    await fetch(route('cart.clear'), {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+      },
+    })
+    
     // Redirect to success page
     router.visit(route('checkout.success', { order: data.order_id }))
   } catch (err) {

@@ -1,6 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
+  <AppLayout>
+    <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
       <div class="mb-4">
         <svg
           class="mx-auto h-16 w-16 text-green-500"
@@ -31,18 +32,20 @@
           Continue Shopping
         </a>
         <a
-          :href="route('admin.transactions.index')"
+          :href="route('orders.index')"
           class="block w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300"
         >
-          View Transactions
+          View Orders
         </a>
       </div>
+      </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
 import { route as ziggyRoute } from 'ziggy-js'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineProps({
   order_id: {

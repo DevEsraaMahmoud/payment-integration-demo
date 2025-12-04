@@ -1,6 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  <AppLayout>
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <div>
@@ -76,7 +77,7 @@
                   min="1"
                   placeholder="10.00"
                   required
-                  class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                  class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg text-gray-900 bg-white"
                 />
               </div>
               <p class="text-xs text-gray-500 mt-1">Minimum amount: $1.00</p>
@@ -260,8 +261,9 @@
           <p class="text-gray-400 text-sm mt-2">Fund your wallet to get started!</p>
         </div>
       </div>
+      </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
@@ -269,6 +271,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { loadStripe } from '@stripe/stripe-js'
 import { router } from '@inertiajs/vue3'
 import { route as ziggyRoute } from 'ziggy-js'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 const route = ziggyRoute
 

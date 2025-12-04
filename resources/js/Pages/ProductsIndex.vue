@@ -1,23 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Products</h1>
-        <div class="flex gap-3">
-          <button
-            @click="goToWallet"
-            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            💰 My Wallet
-          </button>
-          <button
-            @click="goToCart"
-            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            🛒 View Cart
-          </button>
-        </div>
-      </div>
 
       <div v-if="$page.props.flash?.success" class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
         {{ $page.props.flash.success }}
@@ -83,12 +66,6 @@ function addToCart(productId) {
   })
 }
 
-function goToWallet() {
-  router.visit(route('wallet.index'))
-}
 
-function goToCart() {
-  router.visit(route('cart.index'))
-}
 </script>
 

@@ -40,5 +40,31 @@ class Transaction extends Model
             && $this->payment_provider === 'stripe'
             && !empty($this->charge_id);
     }
+
+    /**
+     * Find transaction by charge_id
+     */
+    public static function findByChargeId(string $chargeId): ?self
+    {
+        return static::where('payment_provider', 'stripe')
+            ->where(function ($query) use ($chargeId) {
+                $query->where('charge_id', $chargeId)
+                    ->orWhere('metadata->charge_id', $chargeId);
+            })
+            ->first();
+    }
+
+    /**
+     * Find transaction by payment_intent_id
+     */
+    public static function findByPaymentIntentId(string $paymentIntentId): ?self
+    {
+        return static::where('payment_provider', 'stripe')
+            ->where(function ($query) use ($paymentIntentId) {
+                $query->where('transaction_id', $paymentIntentId)
+                    ->orWhere('metadata->payment_intent_id', $paymentIntentId);
+            })
+            ->first();
+    }
 }
 

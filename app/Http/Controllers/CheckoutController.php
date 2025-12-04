@@ -40,6 +40,10 @@ class CheckoutController extends Controller
                     'quantity' => (int) $quantity,
                     'subtotal' => $itemTotal,
                 ];
+            } else {
+                // Product not found - remove from cart
+                unset($cart[$productId]);
+                $request->session()->put('cart', $cart);
             }
         }
 
@@ -127,6 +131,9 @@ class CheckoutController extends Controller
             }
 
             DB::commit();
+
+            // Don't clear cart here - wait until payment is confirmed
+            // Cart will be cleared after successful payment via webhook or frontend redirect
 
             return response()->json([
                 'order_id' => $order->id,

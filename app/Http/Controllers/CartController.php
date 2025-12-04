@@ -37,6 +37,7 @@ class CartController extends Controller
         return Inertia::render('Cart', [
             'items' => $cartItems,
             'total' => $total,
+            'cartCount' => array_sum($cart), // Add cart count for consistency
         ]);
     }
 
@@ -126,6 +127,10 @@ class CartController extends Controller
                     'subtotal' => $itemTotal,
                     'image' => $product->image_url, // Use accessor to handle URLs correctly
                 ];
+            } else {
+                // Product not found - remove from cart
+                unset($cart[$productId]);
+                $request->session()->put('cart', $cart);
             }
         }
 

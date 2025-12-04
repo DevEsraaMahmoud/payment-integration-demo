@@ -113,7 +113,12 @@
     </footer>
 
     <!-- Cart Drawer -->
-    <CartDrawer :open="cartDrawerOpen" @close="cartDrawerOpen = false" />
+    <CartDrawer 
+      :open="cartDrawerOpen" 
+      :items="cartItems" 
+      :total="cartTotal"
+      @close="cartDrawerOpen = false" 
+    />
   </div>
 </template>
 
@@ -136,8 +141,8 @@ const cartTotal = ref(0)
 async function toggleCart() {
   cartDrawerOpen.value = !cartDrawerOpen.value
   
-  // Load cart data when drawer opens
-  if (cartDrawerOpen.value && cartItems.value.length === 0) {
+  // Always load cart data when drawer opens to get latest state
+  if (cartDrawerOpen.value) {
     try {
       const response = await fetch(route('cart.data'))
       const data = await response.json()
@@ -145,20 +150,26 @@ async function toggleCart() {
       cartTotal.value = data.total || 0
     } catch (error) {
       console.error('Failed to load cart data:', error)
+      cartItems.value = []
+      cartTotal.value = 0
     }
   }
 }
 
 // Watch for cart changes and reload
 router.on('success', () => {
-  if (cartDrawerOpen.value) {
-    fetch(route('cart.data'))
-      .then(res => res.json())
-      .then(data => {
-        cartItems.value = data.items || []
-        cartTotal.value = data.total || 0
-      })
-  }
+  // Reload cart data after any successful navigation/action
+  fetch(route('cart.data'))
+    .then(res => res.json())
+    .then(data => {
+      cartItems.value = data.items || []
+      cartTotal.value = data.total || 0
+    })
+    .catch(error => {
+      console.error('Failed to reload cart data:', error)
+      cartItems.value = []
+      cartTotal.value = 0
+    })
 })
 
 function logout() {

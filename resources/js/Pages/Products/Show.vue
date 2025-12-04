@@ -18,7 +18,7 @@
             <div class="flex items-center space-x-4">
               <label class="block">
                 <span class="text-gray-700">Quantity:</span>
-                <input v-model.number="quantity" type="number" min="1" :max="product.stock" class="mt-1 block w-20 px-3 py-2 border border-gray-300 rounded-md">
+                <input v-model.number="quantity" type="number" min="1" :max="product.stock" class="mt-1 block w-20 px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white">
               </label>
               <button 
                 @click="addToCart" 
