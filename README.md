@@ -18,6 +18,7 @@ A complete, production-ready e-commerce application built with Laravel 12, Inert
 ### 💳 Checkout & Payments
 - **Multiple Payment Methods**:
   - 💳 Stripe Card Payments (Stripe Elements)
+  - 🌍 Paymob Payments (iframe integration)
   - 💰 Wallet Payments (instant)
   - 🔄 Partial Wallet + Stripe
 - **Order Management** - Order creation, tracking, history
@@ -66,10 +67,17 @@ npm install
 cp .env.example .env
 php artisan key:generate
 
-# 3. Configure Stripe keys in .env
+# 3. Configure payment provider keys in .env
 STRIPE_KEY=pk_test_...
 STRIPE_SECRET=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Paymob configuration (optional)
+PAYMOB_API_KEY=your_paymob_api_key
+PAYMOB_IFRAME_ID=your_iframe_id
+PAYMOB_INTEGRATOR=your_integration_id
+PAYMOB_HMAC=your_hmac_secret
+PAYMOB_API_BASE=https://accept.paymob.com/api
 
 # 4. Run migrations and seeders
 php artisan migrate --seed
@@ -94,6 +102,162 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 stripe trigger payment_intent.succeeded
 ```
 
+### Paymob Integration Setup
+
+Paymob is integrated as a second payment provider alongside Stripe. Follow these steps to set it up:
+
+#### 1. Get Paymob Credentials
+
+1. Sign up for a Paymob account at https://paymob.com
+2. Navigate to your Paymob dashboard
+3. Get the following credentials:
+   - **API Key** (`PAYMOB_API_KEY`) - Your authentication API key
+   - **Iframe ID** (`PAYMOB_IFRAME_ID`) - Your iframe integration ID
+   - **Integration ID** (`PAYMOB_INTEGRATOR`) - Your payment integration ID
+   - **HMAC Secret** (`PAYMOB_HMAC`) - Secret key for webhook signature verification
+
+#### 2. Configure Environment Variables
+
+Add these to your `.env` file:
+
+```env
+PAYMOB_API_KEY=your_paymob_api_key_here
+PAYMOB_IFRAME_ID=your_iframe_id_here
+PAYMOB_INTEGRATOR=your_integration_id_here
+PAYMOB_HMAC=your_hmac_secret_here
+PAYMOB_API_BASE=https://accept.paymob.com/api
+```
+
+**Note:** Use test mode credentials first. Paymob provides test credentials in their sandbox environment.
+
+#### 3. Run Migrations
+
+```bash
+php artisan migrate
+```
+
+This will add `payment_key` and `raw_response` columns to the `transactions` table.
+
+#### 4. Configure Webhook/Callback URL
+
+In your Paymob dashboard, configure the callback/webhook URL:
+
+**For local development (using ngrok):**
+```bash
+# Install ngrok: https://ngrok.com
+ngrok http 8000
+
+# Use the ngrok URL in Paymob dashboard:
+# https://your-ngrok-url.ngrok.io/webhooks/paymob
+```
+
+**For production:**
+```
+https://yourdomain.com/webhooks/paymob
+```
+
+#### 5. Testing Paymob Integration
+
+**Test Payment Flow:**
+
+1. Add items to cart and proceed to checkout
+2. Select "Pay with Paymob" as payment method
+3. Complete the order form and submit
+4. You'll be redirected to the Paymob iframe page
+5. Complete payment using Paymob test cards
+6. Paymob will send a callback to `/webhooks/paymob`
+7. Order status will update to "paid" upon successful payment
+
+**Test Cards (Paymob Sandbox):**
+- Use test card numbers provided by Paymob in their documentation
+- Common test cards: `4987654321098769` (adjust based on Paymob's test cards)
+
+**Test Callback Locally:**
+
+```bash
+# Using ngrok to expose local server
+ngrok http 8000
+
+# Configure Paymob webhook URL to: https://your-ngrok-url.ngrok.io/webhooks/paymob
+
+# Or test manually with curl:
+curl -X POST http://localhost:8000/webhooks/paymob \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "charge_12345",
+    "order": {"id": "123456"},
+    "success": true,
+    "amount_cents": 1000,
+    "hmac": "computed_hmac_signature"
+  }'
+```
+
+#### 6. Paymob API Flow
+
+The integration follows this flow:
+
+1. **Authentication** - `POST /auth/tokens` - Get auth token using API key
+2. **Create Order** - `POST /ecommerce/orders` - Create Paymob order with amount
+3. **Create Payment Key** - `POST /acceptance/payment_keys` - Generate payment token
+4. **Generate Iframe URL** - Construct iframe URL with payment token
+5. **User Payment** - User completes payment in Paymob iframe
+6. **Callback/Webhook** - Paymob sends callback with transaction result
+7. **HMAC Verification** - Verify callback signature using HMAC secret
+8. **Update Transaction** - Store payment result and update order status
+
+#### 7. Refunds
+
+Paymob refunds can be processed via the admin panel:
+
+1. Navigate to `/admin/transactions`
+2. Find the Paymob transaction
+3. Click "Refund" button
+4. System calls Paymob refund API and updates transaction status
+
+**Note:** Refund API endpoint may vary. Adjust `PaymobService::refund()` method based on Paymob's actual refund API.
+
+#### 8. Troubleshooting Paymob
+
+**Issue: Payment iframe doesn't load**
+- Verify `PAYMOB_IFRAME_ID` is correct
+- Check browser console for CORS errors
+- Ensure Paymob allows your domain in iframe settings
+
+**Issue: Callback not received**
+- Verify webhook URL is correctly configured in Paymob dashboard
+- Check ngrok is running (for local testing)
+- Review Laravel logs: `storage/logs/laravel.log`
+
+**Issue: HMAC verification fails**
+- Verify `PAYMOB_HMAC` secret matches Paymob dashboard
+- Check Paymob documentation for HMAC computation order
+- Adjust `PaymobService::verifyHmac()` method if Paymob uses different field order
+
+**Issue: Transaction not found in callback**
+- Ensure `payment_key` or `paymob_order_id` matches in callback payload
+- Check transaction was created before callback arrives
+- Review callback payload structure in logs
+
+#### 9. Paymob Documentation
+
+Refer to Paymob's official documentation for:
+- API endpoint details
+- HMAC signature computation
+- Webhook payload structure
+- Test card numbers
+- Refund API endpoints
+
+**Paymob API Base URL:** `https://accept.paymob.com/api`
+
+#### 10. Security Best Practices
+
+- ✅ Never commit Paymob credentials to version control
+- ✅ Use environment variables for all secrets
+- ✅ Verify HMAC signature on all callbacks
+- ✅ Store raw callback payloads for audit trail
+- ✅ Use HTTPS in production
+- ✅ Test thoroughly in sandbox before going live
+
 ## 📋 Default Credentials
 
 **Admin User:**
@@ -108,7 +272,7 @@ stripe trigger payment_intent.succeeded
 
 - **Backend**: Laravel 12 (PHP 8.2+)
 - **Frontend**: Inertia.js + Vue 3 + TailwindCSS 4
-- **Payment**: Stripe Payment Intents API
+- **Payment**: Stripe Payment Intents API, Paymob iframe integration
 - **Database**: SQLite (default) or MySQL/PostgreSQL
 - **Authentication**: Laravel session-based auth
 

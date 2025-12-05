@@ -10,3 +10,4 @@ Route::post('/payment/stripe/create-intent', [StripeController::class, 'createPa
 
 // Webhook routes (no CSRF protection)
 Route::post('/webhooks/stripe', [WebhookController::class, 'handle'])->name('webhooks.stripe');
+Route::post('/webhooks/paymob', [\App\Http\Controllers\Payment\PaymobController::class, 'callback'])->name('webhooks.paymob');

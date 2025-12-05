@@ -43,4 +43,13 @@ return [
         'auto_refund_duplicates' => env('AUTO_REFUND_DUPLICATES', false),
     ],
 
+    'paymob' => [
+        'api_key' => env('PAYMOB_API_KEY'),
+        'iframe_id' => env('PAYMOB_IFRAME_ID'),
+        'integrator_id' => env('PAYMOB_INTEGRATOR'),
+        'hmac' => env('PAYMOB_HMAC'),
+        'base_url' => env('PAYMOB_API_BASE', 'https://accept.paymob.com/api'),
+        'ca_bundle' => env('PAYMOB_CA_BUNDLE', 'C:\\Users\\MSI\\cacert.pem'), // Path to CA certificate bundle for SSL verification
+    ],
+
 ];

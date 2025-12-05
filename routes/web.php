@@ -35,6 +35,10 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::post('/checkout/wallet', [WalletController::class, 'checkout'])->name('checkout.wallet');
 
+// Paymob payment routes
+Route::post('/payment/paymob/start', [\App\Http\Controllers\Payment\PaymobController::class, 'startCheckout'])->name('payment.paymob.start');
+Route::get('/payment/paymob/iframe/{order}', [\App\Http\Controllers\Payment\PaymobController::class, 'showIframe'])->name('payment.paymob.iframe');
+
 // Success page
 Route::get('/success', function () {
     return \Inertia\Inertia::render('Success', [
@@ -76,4 +80,5 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->pref
     Route::get('/transactions', [TransactionsController::class, 'index'])->name('admin.transactions.index');
     Route::post('/transactions/{transaction}/refund', [TransactionsController::class, 'refund'])->name('admin.transactions.refund');
     Route::post('/transactions/{transaction}/refund-to-wallet', [TransactionsController::class, 'refundToWallet'])->name('admin.transactions.refund-to-wallet');
+    Route::post('/transactions/{transaction}/refund/paymob', [\App\Http\Controllers\Payment\PaymobController::class, 'refund'])->name('admin.transactions.refund.paymob');
 });

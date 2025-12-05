@@ -12,17 +12,20 @@ class Transaction extends Model
         'payment_provider',
         'transaction_id',
         'charge_id',
+        'payment_key',
         'amount',
         'currency',
         'status',
         'payment_method',
         'metadata',
+        'raw_response',
         'paid_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'metadata' => 'array',
+        'raw_response' => 'array',
         'paid_at' => 'datetime',
     ];
 
@@ -36,9 +39,19 @@ class Transaction extends Model
      */
     public function canBeRefunded(): bool
     {
-        return $this->status === 'completed' 
-            && $this->payment_provider === 'stripe'
-            && !empty($this->charge_id);
+        if ($this->status !== 'completed') {
+            return false;
+        }
+
+        if ($this->payment_provider === 'stripe') {
+            return !empty($this->charge_id);
+        }
+
+        if ($this->payment_provider === 'paymob') {
+            return !empty($this->charge_id) || !empty($this->transaction_id);
+        }
+
+        return false;
     }
 
     /**
@@ -63,6 +76,29 @@ class Transaction extends Model
             ->where(function ($query) use ($paymentIntentId) {
                 $query->where('transaction_id', $paymentIntentId)
                     ->orWhere('metadata->payment_intent_id', $paymentIntentId);
+            })
+            ->first();
+    }
+
+    /**
+     * Find transaction by Paymob payment_key
+     */
+    public static function findByPaymentKey(string $paymentKey): ?self
+    {
+        return static::where('payment_provider', 'paymob')
+            ->where('payment_key', $paymentKey)
+            ->first();
+    }
+
+    /**
+     * Find transaction by Paymob order_id
+     */
+    public static function findByPaymobOrderId(string $orderId): ?self
+    {
+        return static::where('payment_provider', 'paymob')
+            ->where(function ($query) use ($orderId) {
+                $query->where('transaction_id', $orderId)
+                    ->orWhere('metadata->paymob_order_id', $orderId);
             })
             ->first();
     }

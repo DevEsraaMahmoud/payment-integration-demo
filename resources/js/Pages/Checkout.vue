@@ -100,6 +100,18 @@
                     <div class="text-sm text-gray-500">Stripe secure payment</div>
                   </div>
                 </label>
+                <label class="flex items-center p-3 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
+                  <input
+                    v-model="paymentMethod"
+                    type="radio"
+                    value="paymob"
+                    class="mr-3"
+                  />
+                  <div class="flex-1">
+                    <div class="font-medium text-gray-900">Pay with Paymob</div>
+                    <div class="text-sm text-gray-500">Secure payment gateway</div>
+                  </div>
+                </label>
                 <label
                   v-if="walletBalance > 0"
                   class="flex items-center p-3 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
@@ -211,7 +223,7 @@ const props = defineProps({
 const stripeLoaded = ref(false)
 const processing = ref(false)
 const error = ref('')
-const paymentMethod = ref('stripe') // 'stripe' or 'wallet'
+const paymentMethod = ref('stripe') // 'stripe', 'paymob', or 'wallet'
 let stripe = null
 let elements = null
 let cardElement = null
@@ -330,6 +342,12 @@ async function handleSubmit() {
     return
   }
 
+  // Handle Paymob payment
+  if (paymentMethod.value === 'paymob') {
+    await handlePaymobPayment()
+    return
+  }
+
   // Handle Stripe payment
   if (!stripe || !cardElement) {
     error.value = 'Stripe not loaded'
@@ -443,6 +461,55 @@ function preventEnterSubmit(e) {
   if (e.key === 'Enter' && processing.value) {
     e.preventDefault()
     e.stopPropagation()
+  }
+}
+
+async function handlePaymobPayment() {
+  error.value = ''
+  processing.value = true
+
+  try {
+    // Step 1: Create order
+    const orderResponse = await fetch(route('checkout.store'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+      },
+      body: JSON.stringify(form.value),
+    })
+
+    if (!orderResponse.ok) {
+      const errorData = await orderResponse.json()
+      throw new Error(errorData.error || 'Failed to create order')
+    }
+
+    const { order_id } = await orderResponse.json()
+
+    // Step 2: Start Paymob checkout
+    const paymobResponse = await fetch(route('payment.paymob.start'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+      },
+      body: JSON.stringify({
+        order_id: order_id,
+      }),
+    })
+
+    if (!paymobResponse.ok) {
+      const errorData = await paymobResponse.json()
+      throw new Error(errorData.error || 'Failed to start Paymob checkout')
+    }
+
+    const { iframe_url } = await paymobResponse.json()
+
+    // Step 3: Redirect to Paymob iframe page
+    router.visit(route('payment.paymob.iframe', order_id))
+  } catch (err) {
+    error.value = err.message || 'An error occurred during checkout'
+    processing.value = false
   }
 }
 
