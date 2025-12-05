@@ -9,15 +9,15 @@ A complete e-commerce application built with Laravel 12, Inertia.js, Vue 3, Tail
 </p>
 
 <p align="center">
-  <img src="screenshots/Screenshot 2025-12-05 062901.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063420.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063434.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063501.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063527.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063601.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063747.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063921.png" width="100"/>
-  <img src="screenshots/Screenshot 2025-12-05 063601.png" width="100"/>
+  <img src="screenshots/Screenshot 2025-12-05 062901.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063420.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063434.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063501.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063527.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063601.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063747.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063921.png" width="150"/>
+  <img src="screenshots/Screenshot 2025-12-05 063601.png" width="150"/>
 </p>
 
 ## ✨ Features
