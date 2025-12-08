@@ -39,6 +39,7 @@ class CheckoutController extends Controller
                     'price' => $price,
                     'quantity' => (int) $quantity,
                     'subtotal' => $itemTotal,
+                    'image' => $product->image_url, // Include product image
                 ];
             } else {
                 // Product not found - remove from cart

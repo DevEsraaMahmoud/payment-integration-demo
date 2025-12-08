@@ -1,25 +1,51 @@
 <template>
   <AppLayout>
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">Welcome to E-Commerce</h1>
-        <p class="text-xl mb-8">Discover amazing products at great prices</p>
-        <a :href="route('products.index')" class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-          Shop Now
-        </a>
+    <section class="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white py-24 overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+      </div>
+      
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          Discover Amazing
+          <span class="block bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">Products</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-10 text-gray-100 max-w-2xl mx-auto">
+          Shop the latest trends and find everything you need at unbeatable prices
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a :href="route('products.index')" class="inline-block bg-white text-blue-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-2xl hover:shadow-3xl hover:scale-105 transform">
+            Shop Now →
+          </a>
+          <a href="#featured" class="inline-block bg-white/10 backdrop-blur-sm text-white px-10 py-4 rounded-xl font-bold text-lg border-2 border-white/30 hover:bg-white/20 transition-all">
+            Explore Products
+          </a>
+        </div>
       </div>
     </section>
 
     <!-- Categories -->
-    <section v-if="categories.length > 0" class="py-12 bg-white">
+    <section v-if="categories.length > 0" class="py-16 bg-gradient-to-b from-white to-gray-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center mb-8">Shop by Category</h2>
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold text-gray-900 mb-3">Shop by Category</h2>
+          <p class="text-gray-600 text-lg">Browse our curated collections</p>
+        </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div v-for="category in categories" :key="category.id" class="text-center">
-            <div class="bg-gray-100 rounded-lg p-6 hover:bg-gray-200 transition cursor-pointer">
-              <h3 class="font-semibold text-lg">{{ category.name }}</h3>
-              <p class="text-sm text-gray-600 mt-2">{{ category.description }}</p>
+          <div 
+            v-for="category in categories" 
+            :key="category.id" 
+            class="group relative bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-blue-200 overflow-hidden"
+          >
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <span class="text-2xl">📦</span>
+              </div>
+              <h3 class="font-bold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{{ category.name }}</h3>
+              <p class="text-sm text-gray-600">{{ category.description }}</p>
             </div>
           </div>
         </div>
@@ -27,27 +53,28 @@
     </section>
 
     <!-- Featured Products -->
-    <section class="py-12 bg-gray-50">
+    <section id="featured" class="py-16 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center mb-8">Featured Products</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <div v-for="product in featuredProducts" :key="product.id" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-            <img :src="product.image" :alt="product.name" class="w-full h-48 object-cover">
-            <div class="p-4">
-              <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ product.description }}</p>
-              <div class="flex justify-between items-center">
-                <span class="text-2xl font-bold text-blue-600">${{ product.price.toFixed(2) }}</span>
-                <a :href="route('products.show', product.id)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                  View
-                </a>
-              </div>
-            </div>
-          </div>
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold text-gray-900 mb-3">Featured Products</h2>
+          <p class="text-gray-600 text-lg">Handpicked selections just for you</p>
         </div>
-        <div class="text-center mt-8">
-          <a :href="route('products.index')" class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <ProductCard 
+            v-for="product in featuredProducts" 
+            :key="product.id" 
+            :product="product"
+          />
+        </div>
+        <div class="text-center mt-12">
+          <a 
+            :href="route('products.index')" 
+            class="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 transform"
+          >
             View All Products
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
           </a>
         </div>
       </div>
@@ -57,6 +84,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
+import ProductCard from '@/Components/ProductCard.vue'
 import { route as ziggyRoute } from 'ziggy-js'
 
 const route = ziggyRoute
