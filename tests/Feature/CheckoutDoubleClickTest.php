@@ -182,3 +182,4 @@ class CheckoutDoubleClickTest extends TestCase
     }
 }
 
+

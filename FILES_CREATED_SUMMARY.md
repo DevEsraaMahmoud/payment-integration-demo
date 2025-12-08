@@ -147,3 +147,4 @@ stripe listen --forward-to http://localhost:8000/webhooks/stripe
 - Admin routes protected by middleware
 - Webhooks verified with Stripe signature
 
+
