@@ -7,19 +7,19 @@ A complete e-commerce application built with Laravel 12, Inertia.js, Vue 3, Tail
 <p align="center">
   <img src="screenshots/1.png" width="200"/>
   <img src="screenshots/3.png" width="200"/>
+  <img src="screenshots/2.png" width="300"/>
 </p>
 
 <p align="center">
-  <img src="screenshots/2.png" width="300"/>
   <img src="screenshots/Screenshot 2025-12-05 062253.png" width="200"/>
   <img src="screenshots/Screenshot 2025-12-05 063747.png" width="200"/>
+  <img src="screenshots/Screenshot 2025-12-05 063921.png" width="300"/>
 </p>
 
 <p align="center">
   <img src="screenshots/Screenshot 2025-12-05 063527.png" width="200"/>
   <img src="screenshots/Screenshot 2025-12-05 063434.png" width="300"/>
   <img src="screenshots/Screenshot 2025-12-05 063501.png" width="200"/>
-  <img src="screenshots/Screenshot 2025-12-05 063921.png" width="300"/>
 </p>
 
 ## ✨ Features
