@@ -111,13 +111,6 @@ Use the Stripe CLI to forward webhook events locally:
 stripe listen --forward-to http://localhost:8000/webhooks/stripe
 ```
 
-## 🔁 Webhook Setup
-
-### Stripe (Local)
-
-```bash
-stripe listen --forward-to http://localhost:8000/webhooks/stripe
-```
 ### Paymob
 For local development, expose your application using ngrok:
 
