@@ -1,128 +1,145 @@
-# E-Commerce Demo - Laravel + Inertia + Vue 3 + Stripe & Paymob
+# E-Commerce Platform — Laravel + Inertia + Vue 3
 
-A complete e-commerce application built with Laravel 12, Inertia.js, Vue 3, TailwindCSS, Stripe, and Paymob payments.
+Production-style e-commerce platform built with **Laravel, Inertia.js, and Vue 3**, focusing on backend correctness, clean architecture, and reliable payment integrations rather than UI polish.
 
-## 📸 Demo
+This project simulates real-world e-commerce challenges such as payment processing, webhook handling, transaction safety, and admin operations.
 
-<p align="center">
-  <img src="screenshots/1.png" width="200"/>
-  <img src="screenshots/3.png" width="200"/>
-  <img src="screenshots/2.png" width="300"/>
-</p>
+---
 
-<p align="center">
-  <img src="screenshots/Screenshot 2025-12-05 062253.png" width="200"/>
-  <img src="screenshots/Screenshot 2025-12-05 063747.png" width="200"/>
-  <img src="screenshots/Screenshot 2025-12-05 063921.png" width="300"/>
-</p>
+## 🧠 Project Goal
 
-<p align="center">
-  <img src="screenshots/Screenshot 2025-12-05 063527.png" width="200"/>
-  <img src="screenshots/Screenshot 2025-12-05 063434.png" width="300"/>
-  <img src="screenshots/Screenshot 2025-12-05 063501.png" width="200"/>
-</p>
+The main purpose of this project is to practice and demonstrate:
 
-## ✨ Features
+- Secure payment flows
+- Event-driven backend design
+- Idempotent webhook handling
+- Scalable order & transaction management
+- Clean separation of concerns
+- Real-world engineering trade-offs
 
-- **Storefront** - Home page, product catalog with filters, product details
-- **Shopping Cart** - Session-based cart with drawer, guest & authenticated support
-- **Multiple Payment Methods** - Stripe, Paymob, Wallet payments
-- **User Accounts** - Authentication, order history, wallet system
-- **Admin Panel** - Dashboard, product/order/transaction management, refunds
-- **Webhooks** - Stripe & Paymob webhook handling with signature verification
+---
 
-## 🚀 Quick Start
+## 🏗️ Architecture Overview
+
+- **Backend-first architecture** with clear responsibility boundaries
+- Business logic isolated using **Service / Action layers**
+- Payment providers abstracted behind a unified interface
+- Webhook processing designed to be:
+  - Idempotent
+  - Retry-safe
+  - Signature-verified
+- Admin operations separated from user-facing flows
+
+---
+
+## ✨ Core Features
+
+### Store & Orders
+- Product catalog with filtering
+- Session-based cart (guest & authenticated users)
+- Order lifecycle management
+
+### Payments
+- Stripe Payment Intents integration
+- Paymob iframe integration
+- Internal wallet-based payments
+- Transaction verification & status tracking
+
+### Webhooks
+- Signature verification (Stripe & Paymob)
+- Duplicate event protection
+- Safe retries without double-charging
+- Centralized webhook logging
+
+### Admin Panel
+- Order & transaction monitoring
+- Refund handling
+- Payment status inspection
+- Protected admin middleware
+
+---
+
+## 🔒 Security & Reliability
+
+- Webhook signature validation
+- Idempotency keys to prevent duplicate charges
+- CSRF protection (webhook routes excluded)
+- Input validation & guarded mass assignment
+- Centralized error logging
+
+---
+
+## 🧩 Tech Stack
+
+- **Backend:** Laravel 12 (PHP 8.2+)
+- **Frontend:** Inertia.js, Vue 3, TailwindCSS
+- **Payments:** Stripe, Paymob
+- **Database:** MySQL / SQLite
+- **Async & Events:** Laravel Events & Listeners
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- PHP 8.2+, Composer, Node.js & npm
-- Stripe account (test mode)
+- PHP 8.2+, Composer
+- Node.js & npm
+- Stripe test account
 - Paymob account (optional)
 
-### Installation
+### Setup
 
 ```bash
-# Install dependencies
-composer install && npm install
+composer install
+npm install
 
-# Setup environment
 cp .env.example .env
 php artisan key:generate
 
-# Configure payment providers in .env
-STRIPE_KEY=pk_test_...
-STRIPE_SECRET=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# Paymob (optional)
-PAYMOB_API_KEY=your_api_key
-PAYMOB_IFRAME_ID=your_iframe_id
-PAYMOB_INTEGRATOR=your_integration_id
-PAYMOB_HMAC=your_hmac_secret
-
-# Run migrations
 php artisan migrate --seed
 
-# Start development
 npm run dev
 php artisan serve
 ```
 
-### Webhook Setup
+## 🔁 Webhook Setup
 
-**Stripe (Local):**
+### Stripe (Local)
+Use the Stripe CLI to forward webhook events locally:
+
 ```bash
 stripe listen --forward-to http://localhost:8000/webhooks/stripe
 ```
 
-**Paymob:**
-- Use ngrok for local: `ngrok http 8000`
-- Configure webhook URL in Paymob dashboard: `https://your-url/webhooks/paymob`
+## 🔁 Webhook Setup
 
-## 📋 Default Credentials
+### Stripe (Local)
 
-- **Admin**: `admin@example.com` / `password`
-- **User**: `test@example.com` / `password`
+```bash
+stripe listen --forward-to http://localhost:8000/webhooks/stripe
+```
+### Paymob
+For local development, expose your application using ngrok:
 
-## 🏗️ Tech Stack
+```bash
+ngrok http 8000
+```
+Then configure the generated public URL as the webhook endpoint in the Paymob dashboard.
 
-- **Backend**: Laravel 12 (PHP 8.2+)
-- **Frontend**: Inertia.js + Vue 3 + TailwindCSS
-- **Payments**: Stripe Payment Intents, Paymob iframe
-- **Database**: SQLite (default) or MySQL/PostgreSQL
+### 📌 Design Decisions & Trade-offs
+- Chose Inertia.js to maintain a single backend-driven architecture without duplicating API layers.
+- Webhooks are handled synchronously with minimal logic to ensure fast acknowledgment.
+- Heavy processing is intentionally kept minimal and can be deferred when scaling.
+- SQLite is supported for simplicity and local setup, while MySQL is recommended for production use.
+- UI is intentionally minimal to keep the focus on backend correctness, architecture, and payment flow clarity.
 
-## 🔒 Security Features
+### 🔮 Possible Improvements
+- Introduce queues for webhook processing at scale.
+- Add automated tests for critical payment flows.
+- Extract the payment integration layer into a standalone reusable package.
+- Add observability and monitoring (metrics, tracing, alerts).
 
-- CSRF protection (webhook routes excluded)
-- Webhook signature verification (Stripe & Paymob)
-- Duplicate charge protection (idempotency keys)
-- Admin middleware protection
-- Input validation & SQL injection protection
-
-## 📊 Key Routes
-
-- `/` - Home
-- `/products` - Product catalog
-- `/checkout` - Checkout page
-- `/orders` - Order history (auth required)
-- `/admin/dashboard` - Admin panel
-- `/admin/transactions` - Transaction management
-
-## 🐛 Troubleshooting
-
-**Webhook not working?**
-- Verify webhook secrets in `.env`
-- Check Laravel logs: `storage/logs/laravel.log`
-- Test with Stripe CLI or ngrok for Paymob
-
-**Payment fails?**
-- Verify API keys are correct
-- Check webhook is receiving events
-- Review transaction logs in admin panel
-
-## 📄 License
-
-MIT License - Free to use for portfolio and learning purposes.
-
----
+### 📄 License
+MIT License — free to use for learning and portfolio purposes.
 
 **Built with ❤️ using Laravel, Inertia.js, Vue 3, Stripe, and Paymob**
